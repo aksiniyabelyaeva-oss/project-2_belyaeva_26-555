@@ -3,6 +3,7 @@ import shlex
 import prompt
 from prettytable import PrettyTable
 
+from primitive_db.constants import META_FILE, MODIFYING_COMMANDS
 from primitive_db.core import (
     create_table,
     delete,
@@ -21,13 +22,12 @@ from primitive_db.utils import (
     save_table_data,
 )
 
-META_FILE = "db_meta.json"
-
-MODIFYING_COMMANDS = ("create_table", "drop_table", "insert", "update", "delete")
 cache_result = create_cacher()
 
 
 def reset_cache():
+    """Создаёт новый пустой кэш после изменения данных."""
+
     global cache_result
     cache_result = create_cacher()
 
@@ -52,6 +52,8 @@ def print_help():
 
 
 def check_table(metadata, table_name):
+    """Проверяет существование таблицы и печатает ошибку, если её нет."""
+
     if table_name not in metadata:
         print(f'Ошибка: Таблица "{table_name}" не существует.')
         return False
@@ -59,6 +61,8 @@ def check_table(metadata, table_name):
 
 
 def check_clause(metadata, table_name, clause):
+    """Проверяет, что столбцы условия существуют и типы значений верны."""
+
     schema = dict(column.split(":") for column in metadata[table_name])
     for column, value in clause.items():
         if column not in schema or not is_valid_type(value, schema[column]):
@@ -66,6 +70,8 @@ def check_clause(metadata, table_name, clause):
 
 
 def handle_insert(metadata, user_input):
+    """Обрабатывает команду insert into ... values (...)."""
+
     head, sep, values_text = user_input.partition(" values ")
     words = head.split()
     if not sep or len(words) != 3 or words[1] != "into":
@@ -84,6 +90,8 @@ def handle_insert(metadata, user_input):
 
 
 def handle_select(metadata, user_input):
+    """Обрабатывает команду select from ... и печатает таблицу."""
+
     rest = user_input[len("select"):].strip()
     if not rest.startswith("from "):
         raise ValueError(user_input)
@@ -110,6 +118,8 @@ def handle_select(metadata, user_input):
 
 
 def handle_update(metadata, user_input):
+    """Обрабатывает команду update ... set ... where ...."""
+
     rest = user_input[len("update"):].strip()
     table_name, sep_set, rest = rest.partition(" set ")
     set_text, sep_where, where_text = rest.partition(" where ")
@@ -137,6 +147,8 @@ def handle_update(metadata, user_input):
 
 
 def handle_delete(metadata, user_input):
+    """Обрабатывает команду delete from ... where ...."""
+
     rest = user_input[len("delete"):].strip()
     if not rest.startswith("from "):
         raise ValueError(user_input)
@@ -162,6 +174,8 @@ def handle_delete(metadata, user_input):
 
 
 def handle_info(metadata, user_input):
+    """Обрабатывает команду info: структура таблицы и число записей."""
+
     words = user_input.split()
     if len(words) != 2:
         raise ValueError(user_input)
@@ -171,6 +185,7 @@ def handle_info(metadata, user_input):
     print(f"Таблица: {table_name}")
     print(f"Столбцы: {', '.join(metadata[table_name])}")
     print(f"Количество записей: {len(load_table_data(table_name))}")
+
 
 DATA_HANDLERS = {
     "insert": handle_insert,
@@ -182,6 +197,8 @@ DATA_HANDLERS = {
 
 
 def run():
+    """Главный цикл программы: читает команды и вызывает обработчики."""
+
     print("***База данных***")
     print_help()
 
