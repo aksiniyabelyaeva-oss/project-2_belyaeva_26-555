@@ -17,3 +17,6 @@
 >>>Введите команду: list_tables
 - users
 ```
+## Демонстрация
+
+[Видео-демонстрация работы пакета](https://drive.google.com/file/d/1cVKkf2GoYBZ7X8Z8kSMc-1cI97Sle5r-/view?usp=sharing)
