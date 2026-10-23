@@ -1,6 +1,8 @@
+from primitive_db.decorators import confirm_action, handle_db_errors, log_time
+
 VALID_TYPES = ("int", "str", "bool")
 
-
+@handle_db_errors
 def create_table(metadata, table_name, columns):
     if table_name in metadata:
         print(f'Ошибка: Таблица "{table_name}" уже существует.')
@@ -20,6 +22,8 @@ def create_table(metadata, table_name, columns):
     return metadata
 
 
+@handle_db_errors
+@confirm_action("удаление таблицы")
 def drop_table(metadata, table_name):
     if table_name not in metadata:
         print(f'Ошибка: Таблица "{table_name}" не существует.')
@@ -45,6 +49,8 @@ def matches(record, where_clause):
     return True
 
 
+@handle_db_errors
+@log_time
 def insert(metadata, table_name, values, table_data):
     if table_name not in metadata:
         print(f'Ошибка: Таблица "{table_name}" не существует.')
@@ -71,12 +77,15 @@ def insert(metadata, table_name, values, table_data):
     return table_data
 
 
+@handle_db_errors
+@log_time
 def select(table_data, where_clause=None):
     if not where_clause:
         return table_data
     return [row for row in table_data if matches(row, where_clause)]
 
 
+@handle_db_errors
 def update(table_data, set_clause, where_clause):
     for row in table_data:
         if matches(row, where_clause):
@@ -84,5 +93,7 @@ def update(table_data, set_clause, where_clause):
     return table_data
 
 
+@handle_db_errors
+@confirm_action("удаление записи")
 def delete(table_data, where_clause):
     return [row for row in table_data if not matches(row, where_clause)]

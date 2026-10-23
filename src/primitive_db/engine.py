@@ -12,6 +12,7 @@ from primitive_db.core import (
     select,
     update,
 )
+from primitive_db.decorators import create_cacher
 from primitive_db.parser import parse_condition, parse_values
 from primitive_db.utils import (
     load_metadata,
@@ -21,6 +22,14 @@ from primitive_db.utils import (
 )
 
 META_FILE = "db_meta.json"
+
+MODIFYING_COMMANDS = ("create_table", "drop_table", "insert", "update", "delete")
+cache_result = create_cacher()
+
+
+def reset_cache():
+    global cache_result
+    cache_result = create_cacher()
 
 
 def print_help():
@@ -41,6 +50,7 @@ def print_help():
     print("<command> exit - выход из программы")
     print("<command> help - справочная информация\n")
 
+
 def check_table(metadata, table_name):
     if table_name not in metadata:
         print(f'Ошибка: Таблица "{table_name}" не существует.')
@@ -53,6 +63,7 @@ def check_clause(metadata, table_name, clause):
     for column, value in clause.items():
         if column not in schema or not is_valid_type(value, schema[column]):
             raise ValueError(f"{column} = {value}")
+
 
 def handle_insert(metadata, user_input):
     head, sep, values_text = user_input.partition(" values ")
@@ -84,7 +95,10 @@ def handle_select(metadata, user_input):
     if condition:
         where_clause = parse_condition(condition)
         check_clause(metadata, table_name, where_clause)
-    rows = select(load_table_data(table_name), where_clause)
+    key = f"{table_name}:{where_clause}"
+    rows = cache_result(
+        key, lambda: select(load_table_data(table_name), where_clause)
+    )
     if not rows:
         print("Записей не найдено.")
         return
@@ -139,7 +153,10 @@ def handle_delete(metadata, user_input):
     if not ids:
         print("Записей не найдено.")
         return
-    save_table_data(table_name, delete(table_data, where_clause))
+    new_data = delete(table_data, where_clause)
+    if len(new_data) == len(table_data):
+        return
+    save_table_data(table_name, new_data)
     for record_id in ids:
         print(f'Запись с ID={record_id} успешно удалена из таблицы "{table_name}".')
 
@@ -181,6 +198,8 @@ def run():
             continue
 
         command = args[0]
+        if command in MODIFYING_COMMANDS:
+            reset_cache()
         match command:
             case "create_table":
                 if len(args) < 3:
