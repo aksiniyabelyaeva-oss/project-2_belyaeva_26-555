@@ -19,10 +19,11 @@
 ```
 ## Демонстрация
 
-[Видео-демонстрация работы пакета](https://drive.google.com/file/d/1cVKkf2GoYBZ7X8Z8kSMc-1cI97Sle5r-/view?usp=sharing)
+[V1 Видео-демонстрация работы пакета](https://drive.google.com/file/d/1cVKkf2GoYBZ7X8Z8kSMc-1cI97Sle5r-/view?usp=sharing)
 
-[Видео-демонстрация CRUD-операций](https://drive.google.com/file/d/1RPYWBjNLuxHFOwEGyDAOUSLTn8o4ho0D/view?usp=sharing)
+[V2 Видео-демонстрация CRUD-операций](https://drive.google.com/file/d/1RPYWBjNLuxHFOwEGyDAOUSLTn8o4ho0D/view?usp=sharing)
 
+[V3 Видео-демонстрация декораторов и подтверждения действий](https://drive.google.com/file/d/1BOqqv1jqd2taj_u2ccuS24R6h82Yjey4/view?usp=drive_link)
 ## CRUD-операции
 
 Команды для работы с данными (строки пишутся в двойных кавычках):
