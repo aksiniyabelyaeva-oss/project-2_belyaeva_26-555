@@ -1,9 +1,9 @@
-import functools
 import time
 
 
 def handle_db_errors(func):
-    @functools.wraps(func)
+    """Декоратор: перехватывает типичные ошибки и печатает сообщение."""
+
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -23,8 +23,9 @@ def handle_db_errors(func):
 
 
 def confirm_action(action_name):
+    """Фабрика декораторов: просит подтвердить действие [y/n]."""
+
     def decorator(func):
-        @functools.wraps(func)
         def wrapper(*args, **kwargs):
             answer = input(
                 f'Вы уверены, что хотите выполнить "{action_name}"? [y/n]: '
@@ -40,7 +41,8 @@ def confirm_action(action_name):
 
 
 def log_time(func):
-    @functools.wraps(func)
+    """Декоратор: выводит время выполнения функции."""
+
     def wrapper(*args, **kwargs):
         start = time.monotonic()
         result = func(*args, **kwargs)
@@ -52,6 +54,8 @@ def log_time(func):
 
 
 def create_cacher():
+    """Возвращает функцию cache_result с кэшем в замыкании."""
+
     cache = {}
 
     def cache_result(key, value_func):
