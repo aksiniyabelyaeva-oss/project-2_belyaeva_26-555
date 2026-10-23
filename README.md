@@ -21,6 +21,8 @@
 
 [Видео-демонстрация работы пакета](https://drive.google.com/file/d/1cVKkf2GoYBZ7X8Z8kSMc-1cI97Sle5r-/view?usp=sharing)
 
+[Видео-демонстрация CRUD-операций](https://drive.google.com/file/d/1RPYWBjNLuxHFOwEGyDAOUSLTn8o4ho0D/view?usp=sharing)
+
 ## CRUD-операции
 
 Команды для работы с данными (строки пишутся в двойных кавычках):
